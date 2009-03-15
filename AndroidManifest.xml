@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.savefon.budgets"
+	android:versionName="0.1" android:versionCode="1">
+
+    <application android:icon="@drawable/app_budgets" android:label="@string/app_name">
+
+        <provider android:name="BudgetsProvider"
+            android:authorities="com.savefon.provider.Budgets"/>
+
+        <activity android:name="AccountsList" android:label="@string/title_accounts_list_empty">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.EDIT" />
+                <action android:name="android.intent.action.PICK" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="vnd.android.cursor.dir/vnd.com.savefon.budgets.accounts" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.GET_CONTENT" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="vnd.android.cursor.item/vnd.com.savefon.budgets.accounts" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name="AccountEditor" android:label="@string/title_account_editor">
+            <intent-filter android:label="@string/resolve_edit">
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.EDIT" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="vnd.android.cursor.item/vnd.com.savefon.budgets.accounts" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.INSERT" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="vnd.android.cursor.dir/vnd.com.savefon.budgets.accounts" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name="TransactionsList" android:label="@string/title_transactions_list_empty">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.EDIT" />
+                <action android:name="android.intent.action.PICK" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="vnd.android.cursor.dir/vnd.com.savefon.budgets.transactions" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.GET_CONTENT" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="vnd.android.cursor.item/vnd.com.savefon.budgets.transactions" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name="TransactionEditor" android:label="@string/title_transaction_editor">
+            <intent-filter android:label="@string/resolve_edit">
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.EDIT" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="vnd.android.cursor.item/vnd.com.savefon.budgets.transactions" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.INSERT" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="vnd.android.cursor.dir/vnd.com.savefon.budgets.transactions" />
+            </intent-filter>
+        </activity>
+	</application>
+</manifest>
+
