@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <string name="menu_delete">Delete</string>
+    <string name="menu_insert">Add budget</string>
+    <string name="menu_edit">Edit</string>
+    <string name="menu_revert">Revert</string>
+    <string name="menu_discard">Discard</string>
+
+    <string name="resolve_edit">Edit budget</string>
+
+    <string name="menu_account_restart">Restart budget</string>
+    <string name="menu_account_edit">Budget settings</string>
+    <string name="menu_account_delete">Delete</string>
+
+    <string name="menu_transaction_browse">Browse transactions</string>
+    <string name="menu_transaction_insert">Add transaction</string>
+    <string name="menu_transaction_edit">Edit transaction</string>
+    <string name="menu_transaction_delete">Delete</string>
+
+    <string name="title_create">Create budget</string>
+    <string name="title_edit">Edit budget</string>
+	<string name="title_accounts_list_empty">Budgets</string>
+	<string name="title_accounts_list_amount">Budgets, available %s</string>
+	<string name="title_accounts_list_balance">Budgets, available %s of %s</string>
+	<string name="title_account_editor">Account</string>
+
+	<string name="title_transactions_list_empty">Transactions</string>
+	<string name="title_transactions_list_amount">%s, %s</string>
+	<string name="title_transactions_list_balance">%s of %s, %s</string>
+	<string name="title_transactions_suffix">%d Spent, %d Available</string>
+	<string name="title_transaction_editor">Transaction</string>
+
+	<string name="accounts_list_spent">%s of %s</string>
+	<string name="accounts_list_spent_income_positive">%s of %s +%s</string>
+	<string name="accounts_list_spent_income_negative">%s of %s -%s</string>
+	<string name="accounts_list_hint_spent">to spend</string>
+	<string name="accounts_list_hint_over">over</string>
+	<string name="account_empty">There are no budgets to display. Add a new budget with the menu.</string>
+
+	<string name="account_title_label">Budget name:</string>
+	<string name="account_amount_label">Amount:</string>
+	<string name="account_rollover_label">Budget rollover:</string>
+	<string name="account_start_date_label">Start date:</string>
+
+	<string name="transaction_title_label">Name:</string>
+	<string name="transaction_amount_label">Amount:</string>
+	<string name="transaction_date_label">Date:</string>
+
+	<string name="app_name">Budgets</string>
+
+	<string name="error_title">Error</string>
+
+	<!-- Confirmation dialog title after users selects to delete a budget. -->
+	<string name="transaction_contextMenu_title">Transaction options</string>
+	<string name="deleteConfirmation_title">Delete</string>
+
+	<!-- Confirmation dialog contents after users selects to delete a budget. -->
+	<string name="account_deleteConfirmation">This budget will be deleted.</string>
+
+	<!-- Confirmation dialog contents after users selects to delete a transaction. -->
+	<string name="transaction_deleteConfirmation">This entry will be deleted.</string>
+
+	<string name="account_restartConfirmation_title">Restart</string>
+	<string name="account_restartConfirmation_message">This budget will be restarted.</string>
+</resources>
