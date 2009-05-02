@@ -28,7 +28,7 @@ public class BudgetsProvider extends ContentProvider {
     private static final String TAG = "BudgetsProvider";
 
     private static final String DATABASE_NAME = "budgets.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     private static final String ACCOUNTS_TABLE_NAME = "accounts";
     private static final String TRANSACTIONS_TABLE_NAME = "transactions";
@@ -129,16 +129,15 @@ public class BudgetsProvider extends ContentProvider {
             Log.w(TAG, "Upgrading database from version " + oldVersion + " to "
                     + newVersion + ", which will destroy all old data");
 
-            db.execSQL("DROP TABLE IF EXISTS " + ACCOUNTS_TABLE_NAME + ";");
-            db.execSQL("DROP TABLE IF EXISTS " + TRANSACTIONS_TABLE_NAME + ";");
+            if (oldVersion == 2) {
+            	db.execSQL("ALTER TABLE " + ACCOUNTS_TABLE_NAME + " CHANGE "
+            			+ Accounts.AMOUNT + " " + Accounts.AMOUNT + " REAL NOT NULL DEFAULT 0.00,"
+            			+ Accounts.SPEND + " " + Accounts.SPEND + " REAL NOT NULL DEFAULT 0.00,"
+            			+ Accounts.INCOME + " " + Accounts.INCOME + " REAL NOT NULL DEFAULT 0.00;");
 
-            db.execSQL("DROP TRIGGER IF EXISTS " + ACCOUNTS_TABLE_NAME + "_update_" + Accounts.START_DATE + ";");
-            db.execSQL("DROP TRIGGER IF EXISTS " + ACCOUNTS_TABLE_NAME + "_delete;");
-            db.execSQL("DROP TRIGGER IF EXISTS " + TRANSACTIONS_TABLE_NAME + "_insert;");
-            db.execSQL("DROP TRIGGER IF EXISTS " + TRANSACTIONS_TABLE_NAME + "_update_" + Transactions.AMOUNT + ";");
-            db.execSQL("DROP TRIGGER IF EXISTS " + TRANSACTIONS_TABLE_NAME + "_delete;");
-
-            onCreate(db);
+            	db.execSQL("ALTER TABLE " + TRANSACTIONS_TABLE_NAME + " CHANGE "
+                        + Transactions.AMOUNT + " " + Transactions.AMOUNT + " REAL NOT NULL DEFAULT 0.00;");
+            }
         }
     }
 
