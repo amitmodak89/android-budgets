@@ -10,14 +10,16 @@ public final class Budgets {
     public static final String AUTHORITY = "com.savefon.provider.Budgets";
 
     // This class cannot be instantiated
-    private Budgets() {}
+    private Budgets() {
+    }
 
     /**
      * Accounts table
      */
     public static final class Accounts implements BaseColumns {
         // This class cannot be instantiated
-        private Accounts() {}
+        private Accounts() {
+        }
 
         /**
          * The content:// style URL for this table
@@ -41,38 +43,52 @@ public final class Budgets {
 
         /**
          * The title of the account
-         * <P>Type: TEXT</P>
+         * <P>
+         * Type: TEXT
+         * </P>
          */
         public static final String TITLE = "title";
 
         /**
-         * <P>Type: INTEGER</P>
+         * <P>
+         * Type: INTEGER
+         * </P>
          */
         public static final String AMOUNT = "amount";
 
         /**
-         * <P>Type: INTEGER</P>
+         * <P>
+         * Type: INTEGER
+         * </P>
          */
         public static final String SPEND = "spend";
 
         /**
-         * <P>Type: INTEGER</P>
+         * <P>
+         * Type: INTEGER
+         * </P>
          */
         public static final String BALANCE = "balance";
 
         /**
-         * <P>Type: INTEGER</P>
+         * <P>
+         * Type: INTEGER
+         * </P>
          */
         public static final String INCOME = "income";
 
         /**
-         * <P>Type: INTEGER</P>
+         * <P>
+         * Type: INTEGER
+         * </P>
          */
         public static final String ROLLOVER_FLAG = "rollover_flag";
 
         /**
          * The timestamp for when the account was started
-         * <P>Type: INTEGER (long from System.curentTimeMillis())</P>
+         * <P>
+         * Type: INTEGER (long from System.curentTimeMillis())
+         * </P>
          */
         public static final String START_DATE = "start_date";
 
@@ -80,7 +96,8 @@ public final class Budgets {
          * Transactions table
          */
         public static final class Transactions {
-            private Transactions() {}
+            private Transactions() {
+            }
 
             /**
              * The content:// style URL for this table
@@ -94,7 +111,8 @@ public final class Budgets {
      */
     public static final class Transactions implements BaseColumns {
         // This class cannot be instantiated
-        private Transactions() {}
+        private Transactions() {
+        }
 
         /**
          * The content:// style URL for this table
@@ -117,29 +135,39 @@ public final class Budgets {
         public static final String DEFAULT_SORT_ORDER = "create_date DESC";
 
         /**
-         * <P>Type: INTEGER</P>
+         * <P>
+         * Type: INTEGER
+         * </P>
          */
         public static final String ACCOUNT_ID = "account_id";
 
         /**
          * The title of the transaction
-         * <P>Type: TEXT</P>
+         * <P>
+         * Type: TEXT
+         * </P>
          */
         public static final String TITLE = "title";
 
         /**
-         * <P>Type: INTEGER</P>
+         * <P>
+         * Type: INTEGER
+         * </P>
          */
         public static final String AMOUNT = "amount";
 
         /**
-         * <P>Type: INTEGER</P>
+         * <P>
+         * Type: INTEGER
+         * </P>
          */
         public static final String ARCHIVE_FLAG = "archive_flag";
 
         /**
          * The timestamp for when the account was transaction
-         * <P>Type: INTEGER (long from System.curentTimeMillis())</P>
+         * <P>
+         * Type: INTEGER (long from System.curentTimeMillis())
+         * </P>
          */
         public static final String CREATE_DATE = "create_date";
     }

@@ -18,8 +18,7 @@ public class TransactionEditor extends Activity {
     /**
      * Standard projection for the interesting columns of a normal transaction.
      */
-    private static final String[] PROJECTION = new String[] {
-            Budgets.Transactions._ID, // 0
+    private static final String[] PROJECTION = new String[] { Budgets.Transactions._ID, // 0
             Budgets.Transactions.TITLE, // 1
             Budgets.Transactions.AMOUNT, // 2
             Budgets.Transactions.CREATE_DATE // 3
@@ -27,12 +26,13 @@ public class TransactionEditor extends Activity {
     /** The index of the transaction column */
     private static final int PROJECTION_INDEX_TITLE = 1;
     private static final int PROJECTION_INDEX_AMOUNT = 2;
-	private static final int PROJECTION_INDEX_DATE = 3;
+    private static final int PROJECTION_INDEX_DATE = 3;
 
     // Identifiers for our menu items.
     private static final int REVERT_ID = Menu.FIRST;
     private static final int DISCARD_ID = Menu.FIRST + 1;
     private static final int DELETE_ID = Menu.FIRST + 2;
+    private static final int SAVE_ID = Menu.FIRST + 3;
 
     // The different distinct states the activity can be run in.
     private static final int STATE_EDIT = 0;
@@ -45,7 +45,7 @@ public class TransactionEditor extends Activity {
     private EditText mAmount;
     private DateControlSet mDate;
     private String mOriginalTitle;
-    private int mOriginalAmount;
+    private float mOriginalAmount;
     private long mOriginalDate;
 
     @Override
@@ -62,7 +62,7 @@ public class TransactionEditor extends Activity {
             mUri = getContentResolver().insert(intent.getData(), null);
 
             // If we were unable to create a new transaction, then just finish
-            // this activity.  A RESULT_CANCELED will be sent back to the
+            // this activity. A RESULT_CANCELED will be sent back to the
             // original activity if they requested a result.
             if (mUri == null) {
                 Log.e(TAG, "Failed to insert new transaction into " + getIntent().getData());
@@ -90,7 +90,7 @@ public class TransactionEditor extends Activity {
         // get the original text it started with.
         if (savedInstanceState != null) {
             mOriginalTitle = savedInstanceState.getString(Budgets.Transactions.TITLE);
-            mOriginalAmount = savedInstanceState.getInt(Budgets.Transactions.AMOUNT);
+            mOriginalAmount = savedInstanceState.getFloat(Budgets.Transactions.AMOUNT);
             mOriginalDate = savedInstanceState.getLong(Budgets.Transactions.CREATE_DATE);
         }
     }
@@ -111,11 +111,11 @@ public class TransactionEditor extends Activity {
             }
 
             // This is a little tricky: we may be resumed after previously being
-            // paused/stopped.  We want to put the new text in the text view,
+            // paused/stopped. We want to put the new text in the text view,
             // but leave the user where they were (retain the cursor position
-            // etc).  This version of setText does that for us.
+            // etc). This version of setText does that for us.
             String title = mCursor.getString(PROJECTION_INDEX_TITLE);
-            int amount = mCursor.getInt(PROJECTION_INDEX_AMOUNT);
+            float amount = mCursor.getFloat(PROJECTION_INDEX_AMOUNT);
             long date = mCursor.getLong(PROJECTION_INDEX_DATE);
 
             mTitle.setText(title);
@@ -123,7 +123,7 @@ public class TransactionEditor extends Activity {
             mDate.setDate(date);
 
             // If we hadn't previously retrieved the original text, do so
-            // now.  This allows the user to revert their changes.
+            // now. This allows the user to revert their changes.
             if (mOriginalTitle == null) {
                 mOriginalTitle = title;
             }
@@ -143,7 +143,7 @@ public class TransactionEditor extends Activity {
         // Save away the original text, so we still have it if the activity
         // needs to be killed while paused.
         outState.putString(Budgets.Transactions.TITLE, mOriginalTitle);
-        outState.putInt(Budgets.Transactions.AMOUNT, mOriginalAmount);
+        outState.putFloat(Budgets.Transactions.AMOUNT, mOriginalAmount);
         outState.putLong(Budgets.Transactions.CREATE_DATE, mOriginalDate);
     }
 
@@ -152,27 +152,15 @@ public class TransactionEditor extends Activity {
         super.onPause();
 
         // The user is going somewhere else, so make sure their current
-        // changes are safely saved away in the provider.  We don't need
+        // changes are safely saved away in the provider. We don't need
         // to do this if only editing.
         if (mCursor != null && mCursor.getCount() > 0) {
-        	int amount;
-			try {
-        		amount = Integer.parseInt(mAmount.getText().toString());
-			} catch (Exception e) {
-				amount = 0;
-			}
-
+            final float amount = getNewTransactionAmount();
             if (isFinishing() && (amount <= 0)) {
                 setResult(RESULT_CANCELED);
                 deleteTransaction();
             } else {
-                ContentValues values = new ContentValues();
-
-                values.put(Budgets.Transactions.TITLE, mTitle.getText().toString());
-                values.put(Budgets.Transactions.AMOUNT, amount);
-                values.put(Budgets.Transactions.CREATE_DATE, mDate.getDate().getTime());
-
-                getContentResolver().update(mUri, values, null, null);
+                saveTransaction();
             }
         }
     }
@@ -182,32 +170,40 @@ public class TransactionEditor extends Activity {
         super.onCreateOptionsMenu(menu);
 
         // Build the menus that are shown when editing.
+        menu.add(0, SAVE_ID, 0, R.string.menu_save).setShortcut('0', 's').setIcon(android.R.drawable.ic_menu_save);
         if (mState == STATE_EDIT) {
-            menu.add(0, REVERT_ID, 0, R.string.menu_revert)
-                    .setShortcut('0', 'r')
+            menu.add(0, REVERT_ID, 0, R.string.menu_revert).setShortcut('1', 'r')
                     .setIcon(android.R.drawable.ic_menu_revert);
-            menu.add(0, DELETE_ID, 0, R.string.menu_delete)
-                    .setShortcut('1', 'd')
+            menu.add(0, DELETE_ID, 0, R.string.menu_delete).setShortcut('2', 'd')
                     .setIcon(android.R.drawable.ic_menu_delete);
 
-        // Build the menus that are shown when inserting.
+            // Build the menus that are shown when inserting.
         } else {
-            menu.add(0, DISCARD_ID, 0, R.string.menu_discard)
-                    .setShortcut('0', 'd')
+            menu.add(0, DISCARD_ID, 0, R.string.menu_discard).setShortcut('1', 'd')
                     .setIcon(android.R.drawable.ic_menu_delete);
         }
 
         // If we are working on a full transaction, then append to the
         // menu items for any other activities that can do stuff with it
-        // as well.  This does a query on the system for any activities that
+        // as well. This does a query on the system for any activities that
         // implement the ALTERNATIVE_ACTION for our data, adding a menu item
         // for each one that is found.
         Intent intent = new Intent(null, getIntent().getData());
         intent.addCategory(Intent.CATEGORY_ALTERNATIVE);
-        menu.addIntentOptions(Menu.CATEGORY_ALTERNATIVE, 0, 0,
-                new ComponentName(this, TransactionEditor.class), null, intent, 0, null);
+        menu.addIntentOptions(Menu.CATEGORY_ALTERNATIVE, 0, 0, new ComponentName(this, TransactionEditor.class), null,
+                intent, 0, null);
 
         return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        final float amount = getNewTransactionAmount();
+        menu.findItem(SAVE_ID).setEnabled(isTransactionChanged() && amount > 0);
+        if (mState == STATE_EDIT) {
+            menu.findItem(REVERT_ID).setEnabled(isTransactionChanged());
+        }
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -220,17 +216,51 @@ public class TransactionEditor extends Activity {
             break;
         case DISCARD_ID:
             cancelTransaction();
+            setResult(RESULT_CANCELED);
+            finish();
             break;
         case REVERT_ID:
             cancelTransaction();
+            setResult(RESULT_CANCELED);
+            finish();
+            break;
+        case SAVE_ID:
+            saveTransaction();
+            finish();
             break;
         }
         return super.onOptionsItemSelected(item);
     }
 
+    private float getNewTransactionAmount() {
+        float amount;
+        try {
+            amount = Float.parseFloat(mAmount.getText().toString());
+        } catch (Exception e) {
+            amount = 0;
+        }
+        return amount;
+    }
+
+    private boolean isTransactionChanged() {
+        final float amount = getNewTransactionAmount();
+        final String title = mTitle.getText().toString();
+        final long createDate = mDate.getDate().getTime();
+        return !title.equals(mOriginalTitle) || amount != mOriginalAmount || createDate != mOriginalDate;
+    }
+
+    private void saveTransaction() {
+        final float amount = getNewTransactionAmount();
+        ContentValues values = new ContentValues();
+        values.put(Budgets.Transactions.TITLE, mTitle.getText().toString());
+        values.put(Budgets.Transactions.AMOUNT, amount);
+        values.put(Budgets.Transactions.CREATE_DATE, mDate.getDate().getTime());
+        getContentResolver().update(mUri, values, null, null);
+    }
+
     /**
-     * Take care of canceling work on a transaction.  Deletes the transaction if we
-     * had created it, otherwise reverts to the original text.
+     * Take care of canceling work on a transaction. Deletes the transaction if we had created it, otherwise reverts to
+     * the original text.
      */
     private final void cancelTransaction() {
         if (mCursor != null) {
@@ -238,18 +268,18 @@ public class TransactionEditor extends Activity {
                 // Put the original transaction text back into the database
                 mCursor.close();
                 mCursor = null;
-                ContentValues values = new ContentValues();
-                values.put(Budgets.Transactions.TITLE, mOriginalTitle);
-                values.put(Budgets.Transactions.AMOUNT, mOriginalAmount);
-                values.put(Budgets.Transactions.CREATE_DATE, mOriginalDate);
-                getContentResolver().update(mUri, values, null, null);
+                if (isTransactionChanged()) {
+                    ContentValues values = new ContentValues();
+                    values.put(Budgets.Transactions.TITLE, mOriginalTitle);
+                    values.put(Budgets.Transactions.AMOUNT, mOriginalAmount);
+                    values.put(Budgets.Transactions.CREATE_DATE, mOriginalDate);
+                    getContentResolver().update(mUri, values, null, null);
+                }
             } else if (mState == STATE_INSERT) {
                 // We inserted an empty transaction, make sure to delete it
                 deleteTransaction();
             }
         }
-        setResult(RESULT_CANCELED);
-        finish();
     }
 
     /**

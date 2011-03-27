@@ -2,8 +2,6 @@ package com.savefon.budgets;
 
 import java.text.NumberFormat;
 
-import com.savefon.budgets.Budgets.Accounts;
-
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.ComponentName;
@@ -16,17 +14,18 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.savefon.budgets.Budgets.Accounts;
+
 /**
- * Displays a list of accounts. Will display accounts from the {@link Uri}
- * provided in the intent if there is one, otherwise defaults to displaying the
- * contents of the {@link BudgetsProvider}
+ * Displays a list of accounts. Will display accounts from the {@link Uri} provided in the intent if there is one,
+ * otherwise defaults to displaying the contents of the {@link BudgetsProvider}
  */
 public class AccountsList extends ListActivity {
     private static final String TAG = "AccountsList";
@@ -42,8 +41,7 @@ public class AccountsList extends ListActivity {
     /**
      * The columns we are interested in from the database
      */
-    private static final String[] PROJECTION = new String[] {
-            Accounts._ID, // 0
+    private static final String[] PROJECTION = new String[] { Accounts._ID, // 0
             Accounts.TITLE, // 1
             Accounts.AMOUNT, // 2
             Accounts.SPEND, // 3
@@ -69,12 +67,13 @@ public class AccountsList extends ListActivity {
             mBalance = balance;
         }
 
+        @Override
         public void onClick(DialogInterface dialog, int which) {
-			ContentValues values = new ContentValues();
-			values.put(Budgets.Accounts.SPEND, 0);
-			values.put(Budgets.Accounts.INCOME, mBalance);
-			values.put(Budgets.Accounts.START_DATE, System.currentTimeMillis());
-			getContentResolver().update(mUri, values, null, null);
+            ContentValues values = new ContentValues();
+            values.put(Budgets.Accounts.SPEND, 0);
+            values.put(Budgets.Accounts.INCOME, mBalance);
+            values.put(Budgets.Accounts.START_DATE, System.currentTimeMillis());
+            getContentResolver().update(mUri, values, null, null);
         }
     }
 
@@ -85,6 +84,7 @@ public class AccountsList extends ListActivity {
             mUri = uri;
         }
 
+        @Override
         public void onClick(DialogInterface dialog, int which) {
             getContentResolver().delete(mUri, null, null);
         }
@@ -113,49 +113,48 @@ public class AccountsList extends ListActivity {
     }
 
     @Override
-	protected void onResume() {
-		super.onResume();
+    protected void onResume() {
+        super.onResume();
 
-		int amount = 0, spend = 0;
-		if (mCursor.getCount() > 0) {
-			mCursor.moveToFirst();
-			while (! mCursor.isAfterLast()) {
-				amount += mCursor.getInt(PROJECTION_INDEX_AMOUNT);
-				spend += mCursor.getInt(PROJECTION_INDEX_SPEND);
-				mCursor.moveToNext();
-			}
-		}
-		if (spend > 0 && amount > 0) {
-			int balance = amount - spend;
-			setTitle(getResources().getString(R.string.title_accounts_list_balance,
-					NumberFormat.getCurrencyInstance().format(balance > 0 ? balance : 0),
-					NumberFormat.getCurrencyInstance().format(amount)));
-		} else if (amount > 0) {
-			setTitle(getResources().getString(R.string.title_accounts_list_amount,
-					NumberFormat.getCurrencyInstance().format(amount)));
-		} else {
-			setTitle(getResources().getString(R.string.title_accounts_list_empty));
-		}
-	}
+        float amount = 0, spend = 0;
+        if (mCursor.getCount() > 0) {
+            mCursor.moveToFirst();
+            while (!mCursor.isAfterLast()) {
+                amount += mCursor.getFloat(PROJECTION_INDEX_AMOUNT);
+                spend += mCursor.getFloat(PROJECTION_INDEX_SPEND);
+                mCursor.moveToNext();
+            }
+        }
+        if (spend > 0 && amount > 0) {
+            float balance = amount - spend;
+            setTitle(getResources().getString(R.string.title_accounts_list_balance,
+                    NumberFormat.getCurrencyInstance().format(balance > 0 ? balance : 0),
+                    NumberFormat.getCurrencyInstance().format(amount)));
+        } else if (amount > 0) {
+            setTitle(getResources().getString(R.string.title_accounts_list_amount,
+                    NumberFormat.getCurrencyInstance().format(amount)));
+        } else {
+            setTitle(getResources().getString(R.string.title_accounts_list_empty));
+        }
+    }
 
-	@Override
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
 
         // This is our one standard application action -- inserting a
         // new account into the list.
-        menu.add(0, MENU_ITEM_INSERT, 0, R.string.menu_insert)
-                .setShortcut('3', 'a')
+        menu.add(0, MENU_ITEM_INSERT, 0, R.string.menu_insert).setShortcut('3', 'a')
                 .setIcon(android.R.drawable.ic_menu_add);
 
         // Generate any additional actions that can be performed on the
-        // overall list.  In a normal install, there are no additional
+        // overall list. In a normal install, there are no additional
         // actions found here, but this allows other applications to extend
         // our menu with their own actions.
         Intent intent = new Intent(null, getIntent().getData());
         intent.addCategory(Intent.CATEGORY_ALTERNATIVE);
-        menu.addIntentOptions(Menu.CATEGORY_ALTERNATIVE, 0, 0,
-                new ComponentName(this, AccountsList.class), null, intent, 0, null);
+        menu.addIntentOptions(Menu.CATEGORY_ALTERNATIVE, 0, 0, new ComponentName(this, AccountsList.class), null,
+                intent, 0, null);
 
         return true;
     }
@@ -167,14 +166,14 @@ public class AccountsList extends ListActivity {
 
         // If there are any accounts in the list (which implies that one of
         // them is selected), then we need to generate the actions that
-        // can be performed on the current selection.  This will be a combination
+        // can be performed on the current selection. This will be a combination
         // of our own specific actions along with any extensions that can be
         // found.
         if (haveItems) {
             // This is the selected item.
             Uri uri = ContentUris.withAppendedId(getIntent().getData(), getSelectedItemId());
 
-            // Build menu...  always starts with the EDIT action...
+            // Build menu... always starts with the EDIT action...
             Intent[] specifics = new Intent[1];
             specifics[0] = new Intent(Intent.ACTION_EDIT, uri);
             MenuItem[] items = new MenuItem[1];
@@ -182,14 +181,11 @@ public class AccountsList extends ListActivity {
             // ... is followed by whatever other actions are available...
             Intent intent = new Intent(null, uri);
             intent.addCategory(Intent.CATEGORY_ALTERNATIVE);
-            menu.addIntentOptions(Menu.CATEGORY_ALTERNATIVE, 0, 0, null, specifics, intent, 0,
-                    items);
+            menu.addIntentOptions(Menu.CATEGORY_ALTERNATIVE, 0, 0, null, specifics, intent, 0, items);
 
             // Give a shortcut to the edit action.
             if (items[0] != null) {
-                items[0]
-                      .setShortcut('1', 'e')
-                      .setIcon(android.R.drawable.ic_menu_edit);
+                items[0].setShortcut('1', 'e').setIcon(android.R.drawable.ic_menu_edit);
             }
         } else {
             menu.removeGroup(Menu.CATEGORY_ALTERNATIVE);
@@ -213,7 +209,7 @@ public class AccountsList extends ListActivity {
     public void onCreateContextMenu(ContextMenu menu, View view, ContextMenuInfo menuInfo) {
         AdapterView.AdapterContextMenuInfo info;
         try {
-             info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+            info = (AdapterView.AdapterContextMenuInfo) menuInfo;
         } catch (ClassCastException e) {
             Log.e(TAG, "bad menuInfo", e);
             return;
@@ -229,8 +225,8 @@ public class AccountsList extends ListActivity {
 
         menu.add(0, MENU_ITEM_TRANSACTION_INSERT, Menu.NONE, R.string.menu_transaction_insert);
         if (amout > 0) {
-        	menu.add(0, MENU_ITEM_TRANSACTION_BROWSE, Menu.NONE, R.string.menu_transaction_browse);
-        	menu.add(0, MENU_ITEM_RESTART, Menu.NONE, R.string.menu_account_restart);
+            menu.add(0, MENU_ITEM_TRANSACTION_BROWSE, Menu.NONE, R.string.menu_transaction_browse);
+            menu.add(0, MENU_ITEM_RESTART, Menu.NONE, R.string.menu_account_restart);
         }
         menu.add(0, MENU_ITEM_EDIT, Menu.NONE, R.string.menu_account_edit);
         menu.add(0, MENU_ITEM_DELETE, Menu.NONE, R.string.menu_account_delete);
@@ -240,59 +236,54 @@ public class AccountsList extends ListActivity {
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info;
         try {
-             info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+            info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         } catch (ClassCastException e) {
             Log.e(TAG, "bad menuInfo", e);
             return false;
         }
 
         switch (item.getItemId()) {
-	        case MENU_ITEM_TRANSACTION_INSERT: {
-	        	Uri uri = ContentUris.withAppendedId(Budgets.Accounts.Transactions.CONTENT_URI, info.id);
-	        	startActivity(new Intent(Intent.ACTION_INSERT, uri));
-	            return true;
-	        }
-	        case MENU_ITEM_TRANSACTION_BROWSE: {
-	        	Uri uri = ContentUris.withAppendedId(Budgets.Accounts.Transactions.CONTENT_URI, info.id);
-	        	startActivity(new Intent(Intent.ACTION_VIEW, uri));
-	        	return true;
-	        }
-	        case MENU_ITEM_RESTART: {
-	        	Uri itemUri = ContentUris.withAppendedId(getIntent().getData(), info.id);
-	        	int balance = 0;
+        case MENU_ITEM_TRANSACTION_INSERT: {
+            Uri uri = ContentUris.withAppendedId(Budgets.Accounts.Transactions.CONTENT_URI, info.id);
+            startActivity(new Intent(Intent.ACTION_INSERT, uri));
+            return true;
+        }
+        case MENU_ITEM_TRANSACTION_BROWSE: {
+            Uri uri = ContentUris.withAppendedId(Budgets.Accounts.Transactions.CONTENT_URI, info.id);
+            startActivity(new Intent(Intent.ACTION_VIEW, uri));
+            return true;
+        }
+        case MENU_ITEM_RESTART: {
+            Uri itemUri = ContentUris.withAppendedId(getIntent().getData(), info.id);
+            int balance = 0;
 
-	        	Cursor cursor = (Cursor) getListAdapter().getItem(info.position);
-	        	if (cursor != null) {
-	        		balance = cursor.getInt(PROJECTION_INDEX_BALANCE);
-	        	}
+            Cursor cursor = (Cursor) getListAdapter().getItem(info.position);
+            if (cursor != null) {
+                balance = cursor.getInt(PROJECTION_INDEX_BALANCE);
+            }
 
-                //TODO make this dialog persist across screen rotations
-                new AlertDialog.Builder(AccountsList.this)
-                    .setTitle(R.string.account_restartConfirmation_title)
+            // TODO make this dialog persist across screen rotations
+            new AlertDialog.Builder(AccountsList.this).setTitle(R.string.account_restartConfirmation_title)
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setMessage(R.string.account_restartConfirmation_message)
                     .setNegativeButton(android.R.string.cancel, null)
-                    .setPositiveButton(android.R.string.ok, new RestartClickListener(itemUri, balance))
-                    .show();
-	            return true;
-	        }
-	        case MENU_ITEM_EDIT: {
-	            Uri itemUri = ContentUris.withAppendedId(getIntent().getData(), info.id);
-	        	startActivity(new Intent(Intent.ACTION_EDIT, itemUri));
-	        	return true;
-	        }
-	        case MENU_ITEM_DELETE: {
-	            final Uri itemUri = ContentUris.withAppendedId(getIntent().getData(), info.id);
-                //TODO make this dialog persist across screen rotations
-                new AlertDialog.Builder(AccountsList.this)
-                    .setTitle(R.string.deleteConfirmation_title)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setMessage(R.string.account_deleteConfirmation)
+                    .setPositiveButton(android.R.string.ok, new RestartClickListener(itemUri, balance)).show();
+            return true;
+        }
+        case MENU_ITEM_EDIT: {
+            Uri itemUri = ContentUris.withAppendedId(getIntent().getData(), info.id);
+            startActivity(new Intent(Intent.ACTION_EDIT, itemUri));
+            return true;
+        }
+        case MENU_ITEM_DELETE: {
+            final Uri itemUri = ContentUris.withAppendedId(getIntent().getData(), info.id);
+            // TODO make this dialog persist across screen rotations
+            new AlertDialog.Builder(AccountsList.this).setTitle(R.string.deleteConfirmation_title)
+                    .setIcon(android.R.drawable.ic_dialog_alert).setMessage(R.string.account_deleteConfirmation)
                     .setNegativeButton(android.R.string.cancel, null)
-                    .setPositiveButton(android.R.string.ok, new DeleteClickListener(itemUri))
-                    .show();
-	            return true;
-	        }
+                    .setPositiveButton(android.R.string.ok, new DeleteClickListener(itemUri)).show();
+            return true;
+        }
         }
         return false;
     }
@@ -304,17 +295,17 @@ public class AccountsList extends ListActivity {
         String action = getIntent().getAction();
         if (Intent.ACTION_PICK.equals(action) || Intent.ACTION_GET_CONTENT.equals(action)) {
             // The caller is waiting for us to return a account selected by
-            // the user.  The have clicked on one, so return it now.
+            // the user. The have clicked on one, so return it now.
             setResult(RESULT_OK, new Intent().setData(uri));
         } else {
             uri = ContentUris.withAppendedId(Budgets.Accounts.Transactions.CONTENT_URI, id);
 
-        	Cursor cursor = (Cursor) getListAdapter().getItem(position);
-        	if (cursor != null && cursor.getInt(PROJECTION_INDEX_SPEND) == 0) {
-        		startActivity(new Intent(Intent.ACTION_INSERT, uri));
-        	} else {
-        		startActivity(new Intent(Intent.ACTION_VIEW, uri));
-			}
+            Cursor cursor = (Cursor) getListAdapter().getItem(position);
+            if (cursor != null && cursor.getInt(PROJECTION_INDEX_SPEND) == 0) {
+                startActivity(new Intent(Intent.ACTION_INSERT, uri));
+            } else {
+                startActivity(new Intent(Intent.ACTION_VIEW, uri));
+            }
         }
     }
 }
