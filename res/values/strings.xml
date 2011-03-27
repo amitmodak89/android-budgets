@@ -6,6 +6,7 @@
     <string name="menu_edit">Edit</string>
     <string name="menu_revert">Revert</string>
     <string name="menu_discard">Discard</string>
+    <string name="menu_save">Save</string>
 
     <string name="resolve_edit">Edit budget</string>
 
@@ -22,18 +23,18 @@
     <string name="title_edit">Edit budget</string>
 	<string name="title_accounts_list_empty">Budgets</string>
 	<string name="title_accounts_list_amount">Budgets, available %s</string>
-	<string name="title_accounts_list_balance">Budgets, available %s of %s</string>
+	<string name="title_accounts_list_balance">Budgets, available %1$s of %2$s</string>
 	<string name="title_account_editor">Account</string>
 
 	<string name="title_transactions_list_empty">Transactions</string>
-	<string name="title_transactions_list_amount">%s, %s</string>
-	<string name="title_transactions_list_balance">%s of %s, %s</string>
-	<string name="title_transactions_suffix">%d Spent, %d Available</string>
+	<string name="title_transactions_list_amount">%1$s, %2$s</string>
+	<string name="title_transactions_list_balance">%1$s of %2$s, %3$s</string>
+	<string name="title_transactions_suffix">%1$d Spent, %2$d Available</string>
 	<string name="title_transaction_editor">Transaction</string>
 
-	<string name="accounts_list_spent">%s of %s</string>
-	<string name="accounts_list_spent_income_positive">%s of %s +%s</string>
-	<string name="accounts_list_spent_income_negative">%s of %s -%s</string>
+	<string name="accounts_list_spent">%1$s of %2$s</string>
+	<string name="accounts_list_spent_income_positive">%1$s of %2$s +%3$s</string>
+	<string name="accounts_list_spent_income_negative">%1$s of %2$s -%3$s</string>
 	<string name="accounts_list_hint_spent">to spend</string>
 	<string name="accounts_list_hint_over">over</string>
 	<string name="account_empty">There are no budgets to display. Add a new budget with the menu.</string>
