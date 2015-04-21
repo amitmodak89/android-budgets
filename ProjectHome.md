@@ -1,0 +1,3 @@
+Budgets is an Android application that helps you track your spending and keep to a budget. You can easily see your total income and your total expenses for a period, plus which expenses you are spending the most on and which expenses you are going over budget on.
+
+<a href='http://www.youtube.com/watch?feature=player_embedded&v=LNpXAvP48eg' target='_blank'><img src='http://img.youtube.com/vi/LNpXAvP48eg/0.jpg' width='425' height=344 /></a>

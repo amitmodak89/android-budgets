@@ -1,0 +1,5 @@
+If you are using an emulator, consult the SDK documentation for the "mksdcard" tool and the emulator -sdcard command-line option.
+
+If you are using the emulator with the Eclipse Android plugin, you can configure the emulator to use your sdcard by clicking on the little black triangle to the right of the "Debug" icon, and then choosing the "Debug Configurations..." menu item. This brings up a "Debug Configurations" dialog box, then choose the "Target" tab and edit the "Additional Emulator Command Line Options" field. Enter "-sdcard full-path-to-sdcard1.iso".
+
+While debugging, or while the device is connected to a computer, make sure that "USB mass storage" is turned off. Otherwise the sdcard will be mounted read-only. You can modify the USB mass storage setting using the "Settings : SD card & phone storage : Use for USB storage" check-box, available from the home-screen Settings menu item.
